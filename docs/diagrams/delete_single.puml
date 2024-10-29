@@ -1,0 +1,41 @@
+@startuml
+
+hide footbox
+skinparam sequenceReferenceBackgroundColor #f7807c
+
+participant ":CommandParser" as CommandParser  #90EE90
+participant ":DeleteCommand" as DeleteCommand #EE82EE
+participant ":Inventory" as Inventory
+participant ":Csv" as Csv
+
+[-> CommandParser : delete 1
+create DeleteCommand
+CommandParser -> DeleteCommand
+activate DeleteCommand
+DeleteCommand --> CommandParser
+deactivate DeleteCommand
+
+CommandParser -> DeleteCommand : execute(["delete","1"])
+activate DeleteCommand
+DeleteCommand -> DeleteCommand : parseIndex("1")
+activate DeleteCommand
+return
+DeleteCommand -> DeleteCommand : deleteSingleRecord(1)
+activate DeleteCommand
+DeleteCommand -> Inventory : getRecords()
+activate Inventory
+return
+
+DeleteCommand -> DeleteCommand : isWithinBounds()
+activate DeleteCommand
+return
+
+DeleteCommand -> Csv : updateCsvAfterDeletion()
+activate Csv
+return
+return
+return
+
+destroy DeleteCommand
+
+@enduml

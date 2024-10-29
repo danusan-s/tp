@@ -63,16 +63,14 @@ This command supports the following formats:
 * '-h \<field_name>': Delete the mentioned field and its column from the inventory.
 * '-r \<start>-\<end>': Delete records from the start index to the end index (both inclusive and 1-based indexing).
 
-#### Architecture Overview
+#### Design
+##### Architecture Overview
 The 'DeleteCommand' is part of the `command` package, and interacts with the following key components:
 * **Inventory**: Contains the current state of the inventory, including fields and records.
 * **Csv**: Handles reading from and writing to the CSV file for data storage persistence.
 * **Ui**: Handles user interactions component such as message to user during command execution.
 
-Command flow of 'DeleteCommand' can be visualized with the following architecture diagram:
-![Architecture Diagram](link-to-architecture-diagram)
-
-#### Component-Level Design
+##### Component-Level Design
 "DeleteCommand" Class:
 * processes the input arguments and executes the logic based on if the second argument is a number or flag.
 * fields and records are validated before updating inventory data into the CSV file.
@@ -80,19 +78,32 @@ Command flow of 'DeleteCommand' can be visualized with the following architectur
 "DeleteCommand" Methods:
   ![Class Diagram](link-to-class-diagram)
 
-#### Sequence Diagram
-*Illustrates how "DeleteCommand" interacts with "Inventory" and "Csv" classes when adding a record:
+#### Implementation Details:
 
-![Sequence Diagram](link-to-sequence-diagram)
+##### Delete Single record:
 
-#### Why Implement "DeleteCommand" in this way?
-Separating implementation of "DeleteCommand", "Inventory", and "Csv" classes ensures:
-* "DeleteCommand" focus only on processing input and delegating task to other specific components.
-* "Csv" class is responsible for updating data into CSV file for storage; ensuring persistence in data control.
-* With this breakdown of implementation, create room for future scalability (e.g. adding more fields types).
+* The `deleteRecord` method in the `DeleteCommand` class is responsible for deleting a single record from the inventory.
+* The method uses one based indexing and first checks if the index is valid.
+* If the index is valid, the record is removed from the inventory and the CSV file is updated.
+* We used one based indexing to make it more intuitive for the user to delete records based on the serial numbers on the list.
+
+Step 1: Initial state of the inventory
+
+Step 2: User enters the command `delete 1`
+
+Step 3: The delete command checks if it has necessary number of arguments.
+
+Step 4: The delete command checks if the argument is a number.
+
+Step 5: The delete command checks if 1 is within the bounds of the inventory.
+ 
+Step 6: The delete command deletes the record at index 1.
+
+![Delete Single Record Sequence Diagram](diagrams/delete_single.png)
 
 #### Alternative Considered
-Only when requirements permits, database implementation has been considered for better handling of fields types for inventory storage.
+Giving each product an unique serial number and using that to delete from the inventory.
+- This required the users to define the serial numbers and made it more complex.
 
 ## Product scope
 ### Target user profile
